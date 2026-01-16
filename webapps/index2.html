@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,120 +9,99 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
     <style>
-        :root {
-            --font-main: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Apple SD Gothic Neo", "Malgun Gothic", "맑은 고딕", sans-serif;
-            --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-        }
-
-        body { 
-            font-family: var(--font-main);
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            text-rendering: optimizeLegibility;
-            -webkit-user-select:none; 
-            user-select:none; 
-            background-color: black; 
-            color: white; 
-            margin: 0; 
-            padding: 0;
-            overflow-x: hidden; /* 모바일 가로스크롤 방지 */
-        }
-
-        /* [PC 전용] 1024px 이상에서만 2/3 스케일링 적용 */
+        <link rel="stylesheet" href="css/style.css"><style>
+        /* Main Content Grid Layout Override for PC */
         @media (min-width: 1024px) {
-            body { height: 100vh; width: 100vw; overflow: hidden; }
-            #scaling-container {
-                transform: scale(0.67);
-                transform-origin: top left;
-                width: 148.5%;
-                height: 149.25%;
-                position: absolute;
-                top: 0;
-                left: 0;
-                display: flex;
-                flex-direction: column;
+            .main-content {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 2rem;
+                height: 0;
+                /* Important for flex/grid overflow handling */
             }
         }
 
-        /* [모바일 전용] 1024px 미만에서는 스케일링 없이 1:1 비율 */
-        @media (max-width: 1023px) {
-            #scaling-container {
-                width: 100%;
-                display: flex;
-                flex-direction: column;
-            }
-        }
-
-        .font-title { font-family: var(--font-main); font-weight: 900; letter-spacing: -0.05em; }
-        .font-timer { font-family: var(--font-mono); font-weight: bold; letter-spacing: -0.05em; }
-        ::-webkit-scrollbar { display: none; }
-        
-        .main-content { display: flex; flex-direction: column; gap: 1rem; padding: 1rem; box-sizing: border-box; }
-
-        @media (min-width: 1024px) {
-            header { padding: 2rem 3rem 1rem 3rem; } 
-            .main-content { 
-                display: grid; 
-                grid-template-columns: 1fr 1fr; 
-                flex: 1; 
-                height: 0; 
-                gap: 2rem; 
-                padding: 1rem 3rem 2rem 3rem;
-            }
-            .level-col { height: 100%; display: flex; flex-direction: column; min-width: 0; overflow: hidden; }
-            .scroll-window { flex: 1; overflow: hidden; position: relative; }
-            .scroll-container { position: absolute; width: 100%; transition: transform 0.1s linear; padding-bottom: 80px; } 
-        }
-        
-        #wod-content-area { flex: 1; min-height: 0; overflow: hidden; }
-
-        .wod-container { 
-            display: block; 
-            height: 100%; 
-            column-gap: 2.5rem; 
-            padding-bottom: 3rem; 
+        /* WOD Container Specifics */
+        .wod-container {
+            display: block;
+            height: 100%;
+            column-gap: 2.5rem;
+            padding-bottom: 3rem;
             box-sizing: border-box;
         }
 
         @media (min-width: 1024px) {
-            .wod-container { 
-                column-count: 2; 
-                column-fill: auto; 
+            .wod-container {
+                column-count: 2;
+                column-fill: auto;
                 column-gap: 5rem;
-                padding-bottom: 9rem; 
+                padding-bottom: 9rem;
             }
         }
 
-        /* [WOD 본문 크기 분리] */
-        .wod-item { 
+        /* WOD Item - Fixed Sizes for Dashboard */
+        .wod-item {
             font-family: var(--font-main);
             font-style: normal !important;
-            line-height: 1.15; 
-            white-space: pre-wrap; 
-            word-break: break-word; 
-            overflow-wrap: anywhere; 
-            font-weight: 600; 
-            color: #f4f4f5; 
-            letter-spacing: -0.03em; 
-            break-inside: avoid-column; 
+            line-height: 1.15;
+            white-space: pre-wrap;
+            word-break: break-word;
+            overflow-wrap: anywhere;
+            font-weight: 600;
+            color: #f4f4f5;
+            letter-spacing: -0.03em;
+            break-inside: avoid-column;
             display: block;
             width: 100%;
-            /* 모바일 기본 크기 */
-            font-size: 1.15rem; 
+            font-size: 1.15rem;
             margin-bottom: 0.6rem;
         }
 
         @media (min-width: 1024px) {
-            .wod-item { 
-                font-size: 3.0rem; /* PC에서는 요청하신 거대 크기 유지 */
-                margin-bottom: 1.3rem; 
+            .wod-item {
+                font-size: 3.0rem;
+                margin-bottom: 1.3rem;
             }
         }
-        
-        .record-grid { display: grid; grid-template-columns: 1fr; gap: 0.5rem; font-family: var(--font-main); }
+
+        /* Records Grid Styles */
+        .record-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0.5rem;
+            font-family: var(--font-main);
+        }
+
         @media (min-width: 1024px) {
-            .record-grid { display: flex; flex-direction: row; gap: 0.5rem; height: 100%; overflow: hidden; }
-            .level-col { flex: 1; }
+            .record-grid {
+                display: flex;
+                flex-direction: row;
+                gap: 0.5rem;
+                height: 100%;
+                overflow: hidden;
+            }
+
+            .level-col {
+                flex: 1;
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+                min-width: 0;
+                overflow: hidden;
+            }
+
+            .scroll-window {
+                flex: 1;
+                overflow: hidden;
+                position: relative;
+            }
+
+            .scroll-container {
+                position: absolute;
+                width: 100%;
+                transition: transform 0.1s linear;
+                padding-bottom: 80px;
+            }
         }
 
         #record-extra {
@@ -129,37 +109,43 @@
             border-radius: 0.75rem;
             padding: 0.5rem 1rem;
             margin-top: 0.5rem;
-            min-height: 2.5rem; 
+            min-height: 2.5rem;
             display: flex;
             align-items: center;
         }
 
         @media (min-width: 1024px) {
             #record-extra {
-                border-radius: 1.5rem; padding: 1rem 1.5rem; margin-top: 1rem; min-height: 4rem; 
+                border-radius: 1.5rem;
+                padding: 1rem 1.5rem;
+                margin-top: 1rem;
+                min-height: 4rem;
             }
         }
-
-        #qrcode-canvas { width: 100% !important; height: 100% !important; display: block; border-radius: 8px; }
     </style>
 </head>
+
 <body class="lg:p-0">
     <div id="scaling-container">
         <header class="border-b-2 border-[#E7FE52]/30 flex-shrink-0 p-3 lg:p-0">
             <div class="flex flex-row justify-between items-center w-full lg:pb-0 lg:pt-0">
-                
                 <div class="flex items-center gap-4 lg:gap-10">
-                    <a href="https://cafe.naver.com/cfbok" target="_blank" class="flex-shrink-0 active:scale-95 transition-transform">
-                        <img src="image_f21f01.png" alt="Logo" class="w-20 h-20 lg:w-40 lg:h-40 object-contain rounded-2xl lg:rounded-[2rem] shadow-2xl border-2 border-zinc-800">
+                    <a href="https://cafe.naver.com/cfbok" target="_blank"
+                        class="flex-shrink-0 active:scale-95 transition-transform">
+                        <img src="image_f21f01.png" alt="Logo"
+                            class="w-20 h-20 lg:w-40 lg:h-40 object-contain rounded-2xl lg:rounded-[2rem] shadow-2xl border-2 border-zinc-800">
                     </a>
-                    
+
                     <div class="flex flex-col">
-                        <h1 class="hidden lg:block text-7xl font-title text-[#E7FE52] uppercase leading-none">CROSSFIT BOK</h1>
-                        <div class="hidden lg:flex date-input-wrapper mt-4 items-center gap-4 text-zinc-400 font-bold" id="calendar-trigger-pc" style="position: relative; cursor: pointer;">
+                        <h1 class="hidden lg:block text-7xl font-title text-[#E7FE52] uppercase leading-none">CROSSFIT
+                            BOK</h1>
+                        <div class="hidden lg:flex date-input-wrapper mt-4 items-center gap-4 text-zinc-400 font-bold"
+                            id="calendar-trigger-pc" style="position: relative; cursor: pointer;">
                             <span class="display-date text-4xl whitespace-nowrap">날짜 로딩 중...</span>
                             <i data-lucide="calendar" class="w-10 h-10"></i>
                         </div>
-                        <div class="lg:hidden date-input-wrapper flex items-center gap-2 text-zinc-400 font-bold" id="calendar-trigger-mobile" style="position: relative; cursor: pointer;">
+                        <div class="lg:hidden date-input-wrapper flex items-center gap-2 text-zinc-400 font-bold"
+                            id="calendar-trigger-mobile" style="position: relative; cursor: pointer;">
                             <span class="display-date text-base whitespace-nowrap">날짜 로딩 중...</span>
                             <i data-lucide="calendar" class="w-4 h-4"></i>
                         </div>
@@ -167,15 +153,17 @@
                 </div>
 
                 <div class="hidden lg:flex items-center gap-12 lg:pb-2">
-                    <div class="flex items-center bg-zinc-900/80 px-8 py-4 rounded-[2.5rem] border-2 border-[#E7FE52]/20 gap-6 shadow-2xl">
-                        <span class="text-[#E7FE52] font-title text-3xl italic leading-tight text-center">BOK<br>카페</span>
+                    <div
+                        class="flex items-center bg-zinc-900/80 px-8 py-4 rounded-[2.5rem] border-2 border-[#E7FE52]/20 gap-6 shadow-2xl">
+                        <span
+                            class="text-[#E7FE52] font-title text-3xl italic leading-tight text-center">BOK<br>카페</span>
                         <div class="bg-white rounded-xl w-36 h-36 flex items-center justify-center overflow-hidden">
                             <canvas id="qrcode-canvas"></canvas>
                         </div>
                     </div>
                     <div class="flex items-center gap-6 text-white font-timer">
-                        <div id="ampm" class="text-5xl font-bold text-zinc-500">오전</div>
-                        <div id="clock" class="text-[10rem] leading-none tracking-tighter">00:00:00</div>
+                        <div id="ampm-pc" class="text-5xl font-bold text-zinc-500">오전</div>
+                        <div id="clock-pc" class="text-[10rem] leading-none tracking-tighter">00:00:00</div>
                     </div>
                 </div>
 
@@ -184,19 +172,24 @@
         </header>
 
         <main id="main-container" class="main-content">
-            <section class="bg-zinc-900/90 p-5 lg:p-14 rounded-[1.5rem] lg:rounded-[3rem] border-2 border-zinc-800 shadow-2xl flex flex-col min-h-0 overflow-hidden">
-                <div class="flex items-center gap-3 lg:gap-6 mb-3 lg:mb-8 border-b-2 border-zinc-800 pb-2 lg:pb-6 flex-shrink-0">
+            <section
+                class="bg-zinc-900/90 p-5 lg:p-14 rounded-[1.5rem] lg:rounded-[3rem] border-2 border-zinc-800 shadow-2xl flex flex-col min-h-0 overflow-hidden">
+                <div
+                    class="flex items-center gap-3 lg:gap-6 mb-3 lg:mb-8 border-b-2 border-zinc-800 pb-2 lg:pb-6 flex-shrink-0">
                     <i data-lucide="zap" class="text-[#E7FE52] w-8 h-8 lg:w-14 lg:h-14 fill-[#E7FE52]"></i>
                     <h2 class="text-2xl lg:text-6xl font-title uppercase tracking-tight">Today's Wod</h2>
                 </div>
                 <div id="wod-content-area">
-                    <h3 class="text-xl lg:text-7xl text-[#E7FE52] mb-3 lg:mb-10 font-title flex-shrink-0" id="wod-title">불러오는 중...</h3>
+                    <h3 class="text-xl lg:text-7xl text-[#E7FE52] mb-3 lg:mb-10 font-title flex-shrink-0"
+                        id="wod-title">불러오는 중...</h3>
                     <div id="wod-movements" class="wod-container"></div>
                 </div>
             </section>
 
-            <section class="bg-zinc-900/90 p-5 lg:p-14 rounded-[1.5rem] lg:rounded-[3rem] border-2 border-zinc-800 shadow-2xl flex flex-col min-h-0 overflow-hidden">
-                <div class="flex items-center justify-between mb-2 lg:mb-6 border-b-2 border-zinc-800 pb-1 lg:pb-6 flex-shrink-0">
+            <section
+                class="bg-zinc-900/90 p-5 lg:p-14 rounded-[1.5rem] lg:rounded-[3rem] border-2 border-zinc-800 shadow-2xl flex flex-col min-h-0 overflow-hidden">
+                <div
+                    class="flex items-center justify-between mb-2 lg:mb-6 border-b-2 border-zinc-800 pb-1 lg:pb-6 flex-shrink-0">
                     <div class="flex items-center gap-3 lg:gap-6">
                         <i data-lucide="trophy" class="text-orange-500 w-8 h-8 lg:w-14 lg:h-14"></i>
                         <h2 class="text-2xl lg:text-6xl font-title text-white uppercase tracking-tight">Records</h2>
@@ -208,114 +201,90 @@
         </main>
     </div>
 
+    <script src="js/app.js"></script>
     <script>
-        const CAFE_WEB_URL = "https://cafe.naver.com/cfbok";
-        let lastDataHash = "";
         let scrollIntervals = [];
 
-        const _util = {
-            updateTime: () => {
-                const now = new Date();
-                const ampm = now.getHours() < 12 ? "오전" : "오후";
-                const timeStr = now.toLocaleTimeString('en-GB', { hour12: false });
-                if(document.getElementById('ampm')) document.getElementById('ampm').innerText = ampm;
-                if(document.getElementById('clock')) document.getElementById('clock').innerText = timeStr;
-            },
-            getTodayStr: () => {
-                const d = new Date();
-                return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
-            },
-            loadData: async (dateStr) => {
-                if (!dateStr) return;
-                try {
-                    const res = await fetch(`data.json?t=${Date.now()}`);
-                    const json = await res.json();
-                    const dayData = json[dateStr] || { wod: { title: "등록된 WOD가 없습니다.", movements: [] }, records: [] };
-                    const currentDataHash = JSON.stringify(dayData) + dateStr;
-                    if (lastDataHash === currentDataHash) return;
-                    lastDataHash = currentDataHash;
+        // Specific rendering logic for Dashboard
+        const renderDashboard = (dayData) => {
+            dayData = dayData || { wod: { title: "등록된 WOD가 없습니다.", movements: [] }, records: [] };
 
-                    const dateText = new Date(dateStr).toLocaleDateString('ko-KR', { year:'numeric', month:'2-digit', day:'2-digit', weekday:'long' }).toUpperCase();
-                    document.querySelectorAll('.display-date').forEach(el => el.innerText = dateText);
-                    document.getElementById('wod-title').innerText = dayData.wod.title;
-                    
-                    const movementsHtml = (dayData.wod.movements || [])
-                        .map(m => {
-                            const isColumnBreak = m.trim().startsWith("[next]");
-                            let content = m.replace(/\[next\]/g, "<br>");
-                            if (content.trim() === "" && !content.includes("<br>")) { content = "&nbsp;"; }
-                            return `<div class="wod-item" style="${isColumnBreak ? 'break-before: column;' : ''}">${content}</div>`;
-                        })
-                        .join('');
-                    document.getElementById('wod-movements').innerHTML = movementsHtml;
+            document.getElementById('wod-title').innerText = dayData.wod.title;
 
-                    const mainLevels = ["Rx'd", "Level A", "Level B", "Level C", "Level D"];
-                    const cmap = { "Rx'd": "border-orange-500", "Level A": "border-green-500", "Level B": "border-blue-500", "Level C": "border-purple-500", "Level D": "border-zinc-500" };
-                    const grouped = {};
-                    (dayData.records || []).forEach(r => {
-                        if (!grouped[r.level]) grouped[r.level] = [];
-                        grouped[r.level].push(r);
-                    });
+            const movementsHtml = (dayData.wod.movements || [])
+                .map(m => {
+                    const isColumnBreak = m.trim().startsWith("[next]");
+                    let content = m.replace(/\[next\]/g, "<br>");
+                    if (content.trim() === "" && !content.includes("<br>")) { content = "&nbsp;"; }
+                    return `<div class="wod-item" style="${isColumnBreak ? 'break-before: column;' : ''}">${content}</div>`;
+                })
+                .join('');
+            document.getElementById('wod-movements').innerHTML = movementsHtml;
 
-                    let gridHtml = "";
-                    mainLevels.forEach(lv => {
-                        const members = grouped[lv] || [];
-                        if (members.length === 0) return; 
-                        
-                        // [모바일/PC 크기 분리 렌더링]
-                        const isPC = window.innerWidth >= 1024;
-                        const lvFont = isPC ? "text-[38px]" : "text-[16px]";
-                        const nameFont = isPC ? "text-[48px]" : "text-[18px]";
-                        const resFont = isPC ? "text-[48px]" : "text-[16px]";
-                        const borderW = isPC ? "border-l-[6px]" : "border-l-[4px]";
+            const mainLevels = ["Rx'd", "Level A", "Level B", "Level C", "Level D"];
+            const cmap = { "Rx'd": "border-orange-500", "Level A": "border-green-500", "Level B": "border-blue-500", "Level C": "border-purple-500", "Level D": "border-zinc-500" };
+            const grouped = {};
+            (dayData.records || []).forEach(r => {
+                if (!grouped[r.level]) grouped[r.level] = [];
+                grouped[r.level].push(r);
+            });
 
-                        gridHtml += `
-                        <div class="level-col">
-                            <div class="${lvFont} font-bold text-[#E7FE52] mb-1 lg:mb-2 uppercase text-center border-b-2 border-zinc-800 pb-1 lg:pb-2 bg-[#121214] z-10">${lv}</div>
-                            <div class="scroll-window">
-                                <div class="scroll-container">
-                                    ${members.map(m => `
-                                        <div class="flex flex-col bg-zinc-800/40 py-1 px-3 lg:px-4 rounded-lg lg:rounded-xl ${borderW} ${cmap[lv] || 'border-zinc-600'} mb-1 lg:mb-2">
-                                            <span class="${nameFont} font-bold text-white leading-tight truncate">${m.name}</span>
-                                            <span class="${resFont} font-timer text-[#E7FE52] whitespace-pre-wrap leading-tight">${m.result}</span>
-                                        </div>`).join('')}
-                                </div>
-                            </div>
-                        </div>`;
-                    });
-                    const recordListEl = document.getElementById('record-list');
-                    recordListEl.innerHTML = gridHtml;
-                    if (window.innerWidth >= 1024) recordListEl.style.gridTemplateColumns = `repeat(${recordListEl.children.length}, 1fr)`;
+            let gridHtml = "";
+            mainLevels.forEach(lv => {
+                const members = grouped[lv] || [];
+                if (members.length === 0) return;
 
-                    const extraLevels = Object.keys(grouped).filter(lv => !mainLevels.includes(lv));
-                    let extraHtml = "";
-                    if (extraLevels.length > 0) {
-                        const isPC = window.innerWidth >= 1024;
-                        const eLvFont = isPC ? "text-[20px]" : "text-[12px]";
-                        const eResFont = isPC ? "text-2xl" : "text-sm";
+                const isPC = window.innerWidth >= 1024;
+                const lvFont = isPC ? "text-[38px]" : "text-[16px]";
+                const nameFont = isPC ? "text-[48px]" : "text-[18px]";
+                const resFont = isPC ? "text-[48px]" : "text-[16px]";
+                const borderW = isPC ? "border-l-[6px]" : "border-l-[4px]";
 
-                        extraHtml = `<div class="flex flex-wrap gap-x-3 lg:gap-x-6 gap-y-1 lg:gap-y-2 items-center">
-                            ${extraLevels.map(lv => `
-                                <div class="flex items-center gap-2 lg:gap-4">
-                                    <span class="${eLvFont} font-bold text-orange-400 uppercase italic">${lv}</span>
-                                    <div class="flex flex-wrap gap-1 lg:gap-3">
-                                        ${grouped[lv].map(m => `
-                                            <div class="bg-orange-500/10 border lg:border-2 border-orange-500/30 px-2 lg:px-4 py-0.5 lg:py-1 rounded-lg lg:rounded-xl flex items-center gap-2 lg:gap-3">
-                                                <span class="${eResFont} font-bold text-white">${m.name}</span>
-                                                <span class="${eResFont} text-[#E7FE52] font-timer">${m.result}</span>
-                                            </div>`).join('')}
-                                    </div>
+                gridHtml += `
+                <div class="level-col">
+                    <div class="${lvFont} font-bold text-[#E7FE52] mb-1 lg:mb-2 uppercase text-center border-b-2 border-zinc-800 pb-1 lg:pb-2 bg-[#121214] z-10">${lv}</div>
+                    <div class="scroll-window">
+                        <div class="scroll-container">
+                            ${members.map(m => `
+                                <div class="flex flex-col bg-zinc-800/40 py-1 px-3 lg:px-4 rounded-lg lg:rounded-xl ${borderW} ${cmap[lv] || 'border-zinc-600'} mb-1 lg:mb-2">
+                                    <span class="${nameFont} font-bold text-white leading-tight truncate">${m.name}</span>
+                                    <span class="${resFont} font-timer text-[#E7FE52] whitespace-pre-wrap leading-tight">${m.result}</span>
                                 </div>`).join('')}
-                        </div>`;
-                    }
-                    const extraEl = document.getElementById('record-extra');
-                    extraEl.innerHTML = extraHtml;
-                    extraEl.style.display = extraHtml ? 'flex' : 'none';
+                        </div>
+                    </div>
+                </div>`;
+            });
+            const recordListEl = document.getElementById('record-list');
+            recordListEl.innerHTML = gridHtml;
+            if (window.innerWidth >= 1024) recordListEl.style.gridTemplateColumns = `repeat(${recordListEl.children.length}, 1fr)`;
 
-                    lucide.createIcons();
-                    setTimeout(startAutoScroll, 500);
-                } catch (err) { console.error(err); }
+            const extraLevels = Object.keys(grouped).filter(lv => !mainLevels.includes(lv));
+            let extraHtml = "";
+            if (extraLevels.length > 0) {
+                const isPC = window.innerWidth >= 1024;
+                const eLvFont = isPC ? "text-[20px]" : "text-[12px]";
+                const eResFont = isPC ? "text-2xl" : "text-sm";
+
+                extraHtml = `<div class="flex flex-wrap gap-x-3 lg:gap-x-6 gap-y-1 lg:gap-y-2 items-center">
+                    ${extraLevels.map(lv => `
+                        <div class="flex items-center gap-2 lg:gap-4">
+                            <span class="${eLvFont} font-bold text-orange-400 uppercase italic">${lv}</span>
+                            <div class="flex flex-wrap gap-1 lg:gap-3">
+                                ${grouped[lv].map(m => `
+                                    <div class="bg-orange-500/10 border lg:border-2 border-orange-500/30 px-2 lg:px-4 py-0.5 lg:py-1 rounded-lg lg:rounded-xl flex items-center gap-2 lg:gap-3">
+                                        <span class="${eResFont} font-bold text-white">${m.name}</span>
+                                        <span class="${eResFont} text-[#E7FE52] font-timer">${m.result}</span>
+                                    </div>`).join('')}
+                            </div>
+                        </div>`).join('')}
+                </div>`;
             }
+            const extraEl = document.getElementById('record-extra');
+            extraEl.innerHTML = extraHtml;
+            extraEl.style.display = extraHtml ? 'flex' : 'none';
+
+            if (window.lucide) window.lucide.createIcons();
+            setTimeout(startAutoScroll, 500);
         };
 
         function startAutoScroll() {
@@ -327,7 +296,7 @@
                 if (!windowEl || !container) return;
                 const viewHeight = windowEl.clientHeight;
                 const maxScroll = container.scrollHeight - viewHeight;
-                if (maxScroll > 5) { 
+                if (maxScroll > 5) {
                     let position = 0; let direction = 1; let isPaused = false;
                     const interval = setInterval(() => {
                         if (isPaused) return;
@@ -343,19 +312,24 @@
         window.onload = () => {
             _util.updateTime();
             setInterval(_util.updateTime, 1000);
+
+            const dateSel = initCalendar();
             const today = _util.getTodayStr();
-            const dateSel = document.getElementById('date-selector');
             dateSel.value = today;
-            _util.loadData(today);
-            setInterval(() => _util.loadData(dateSel.value), 5000);
-            new QRious({ element: document.getElementById('qrcode-canvas'), value: CAFE_WEB_URL, size: 600, level: 'M', padding: 6 });
-            const triggerIds = ['calendar-trigger-pc', 'calendar-trigger-mobile'];
-            triggerIds.forEach(id => {
-                const el = document.getElementById(id);
-                if(el) el.onclick = () => dateSel.showPicker();
-            });
-            dateSel.onchange = (e) => { lastDataHash = ""; _util.loadData(e.target.value); };
+
+            _util.loadData(today, renderDashboard);
+            setInterval(() => _util.loadData(dateSel.value, renderDashboard), 5000);
+
+            initQR();
+
+            dateSel.onchange = (e) => {
+                // Resetting lastDataHash in app.js via loadData logic (based on dateStr change/comparison)
+                // We might need to force reset if we want immediate reload even if hash matches? 
+                // No, standard behavior is fine.
+                _util.loadData(e.target.value, renderDashboard);
+            };
         };
     </script>
 </body>
+
 </html>

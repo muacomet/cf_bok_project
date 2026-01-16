@@ -7,9 +7,9 @@ services:
     ports:
       - "18080:18080"  # 18080 포트 하나로 통합
     volumes:
-      - ./webapps/:/usr/local/tomcat/webapps/
+      - ./webapps/:/usr/local/tomcat/webapps/ROOT/
       - ./tomcat_conf/:/usr/local/tomcat/conf/
-      - ./database_backup:/usr/local/tomcat/webapps/database_backup
+      - ./database_backup:/usr/local/tomcat/webapps/ROOT/database_backup
       # - /volume1/docker/cf_bok/webapps/:/usr/local/tomcat/webapps/
       # - /volume1/docker/cf_bok/tomcat_conf/:/usr/local/tomcat/conf/
       # - /volume1/docker/cf_bok/database_backup:/usr/local/tomcat/webapps/database_backup

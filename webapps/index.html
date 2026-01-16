@@ -7,70 +7,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
+    <link rel="stylesheet" href="css/style.css">
     <style>
-        :root {
-            --font-main: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Apple SD Gothic Neo", "Malgun Gothic", "맑은 고딕", sans-serif;
-            --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-            /* [추가] 폰트 크기 조절을 위한 기본 배율 변수 */
-            --wod-zoom: 1.0; 
-        }
-
-        body { 
-            font-family: var(--font-main);
-            -webkit-font-smoothing: antialiased;
-            background-color: black; 
-            color: white; 
-            margin: 0; 
-            padding: 0;
-            -webkit-user-select:none; 
-            user-select:none;
-        }
-
-        @media (min-width: 1024px) {
-            body { height: 100vh; width: 100vw; overflow: hidden; }
-            #scaling-container {
-                transform: scale(0.67);
-                transform-origin: top left;
-                width: 148.5%;
-                height: 149.25%;
-                position: absolute;
-                top: 0; left: 0;
-                display: flex;
-                flex-direction: column;
-            }
-        }
-
-        @media (max-width: 1023px) {
-            #scaling-container { width: 100%; display: flex; flex-direction: column; }
-        }
-
-        .font-title { font-family: var(--font-main); font-weight: 900; letter-spacing: -0.05em; }
-        .font-timer { 
-            font-family: var(--font-mono); 
-            font-weight: bold; 
-            font-variant-numeric: tabular-nums; 
-            -webkit-font-feature-settings: "tnum";
-            font-feature-settings: "tnum";
-            letter-spacing: -0.02em;
-        }
-
-        ::-webkit-scrollbar { height: 8px; background: #18181b; }
-        ::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 10px; }
-
-        .main-content { display: flex; flex-direction: column; gap: 1rem; padding: 1rem; box-sizing: border-box; flex: 1; min-height: 0; }
-
-        @media (min-width: 1024px) {
-            header { padding: 2rem 3rem 1rem 3rem; } 
-            .main-content { padding: 1rem 3rem 2rem 3rem; }
-        }
-        
-        #wod-content-area { 
-            flex: 1; 
-            min-height: 0; 
-            overflow-x: auto; 
-            overflow-y: hidden;
-        }
-
         .wod-container { 
             display: block; 
             height: 100%; 
@@ -101,7 +39,6 @@
             display: block;
             width: 100%;
             break-inside: avoid-column;
-            /* [수정] --wod-zoom 변수를 적용하여 실시간 크기 조절 */
             font-size: calc(1.25rem * var(--wod-zoom)); 
             margin-bottom: calc(0.8rem * var(--wod-zoom));
         }
@@ -112,8 +49,6 @@
                 margin-bottom: calc(1.8rem * var(--wod-zoom)); 
             }
         }
-
-        #qrcode-canvas { width: 100% !important; height: 100% !important; display: block; border-radius: 8px; }
 
         /* 조절 버튼 스타일 */
         .zoom-btn {
@@ -200,81 +135,54 @@
         </main>
     </div>
 
+    <script src="js/app.js"></script>
     <script>
-        const CAFE_WEB_URL = "https://cafe.naver.com/cfbok";
-        let lastDataHash = "";
-        let currentZoom = 1.0; // 현재 폰트 배율 상태
-
-        // [추가] 폰트 크기 조절 함수
+        // Page specific logic for index.html
         function changeWodSize(delta) {
-            currentZoom = Math.max(0.5, Math.min(2.0, currentZoom + delta)); // 0.5배 ~ 2배 제한
+            // currentZoom is global in app.js
+            currentZoom = Math.max(0.5, Math.min(2.0, currentZoom + delta)); 
             document.documentElement.style.setProperty('--wod-zoom', currentZoom);
         }
 
-        const _util = {
-            updateTime: () => {
-                const now = new Date();
-                const ampm = now.getHours() < 12 ? "오전" : "오후";
-                const timeStr = now.toLocaleTimeString('en-GB', { hour12: false });
-                
-                const ampmPc = document.getElementById('ampm-pc');
-                const clockPc = document.getElementById('clock-pc');
-                if(ampmPc) ampmPc.innerText = ampm;
-                if(clockPc) clockPc.innerText = timeStr;
-
-                const ampmMob = document.getElementById('ampm-mobile');
-                const clockMob = document.getElementById('clock-mobile');
-                if(ampmMob) ampmMob.innerText = ampm;
-                if(clockMob) clockMob.innerText = timeStr;
-            },
-            getTodayStr: () => {
-                const d = new Date();
-                return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
-            },
-            loadData: async (dateStr) => {
-                if (!dateStr) return;
-                try {
-                    const res = await fetch(`data.json?t=${Date.now()}`);
-                    const json = await res.json();
-                    const dayData = json[dateStr] || { wod: { title: "등록된 WOD가 없습니다.", movements: [] } };
-                    const currentDataHash = JSON.stringify(dayData) + dateStr;
-                    if (lastDataHash === currentDataHash) return;
-                    lastDataHash = currentDataHash;
-
-                    const dateText = new Date(dateStr).toLocaleDateString('ko-KR', { year:'numeric', month:'2-digit', day:'2-digit', weekday:'long' }).toUpperCase();
-                    document.querySelectorAll('.display-date').forEach(el => el.innerText = dateText);
-                    document.getElementById('wod-title').innerText = dayData.wod.title;
-                    
-                    const movementsHtml = (dayData.wod.movements || [])
-                        .map(m => {
-                            let content = m.replace(/\[next\]/g, "<br>").trim();
-                            if (content === "") content = "&nbsp;";
-                            return `<div class="wod-item">${content}</div>`;
-                        })
-                        .join('');
-                    document.getElementById('wod-movements').innerHTML = movementsHtml;
-
-                    lucide.createIcons();
-                } catch (err) { console.error(err); }
-            }
+        const renderWod = (data) => {
+            const dayData = data || { wod: { title: "등록된 WOD가 없습니다.", movements: [] } };
+            document.getElementById('wod-title').innerText = dayData.wod.title;
+            
+            const movementsHtml = (dayData.wod.movements || [])
+                .map(m => {
+                    let content = m.replace(/\[next\]/g, "<br>").trim();
+                    if (content === "") content = "&nbsp;";
+                    return `<div class="wod-item">${content}</div>`;
+                })
+                .join('');
+            document.getElementById('wod-movements').innerHTML = movementsHtml;
         };
 
         window.onload = () => {
             _util.updateTime();
             setInterval(_util.updateTime, 1000);
-            const today = _util.getTodayStr();
-            const dateSel = document.getElementById('date-selector');
-            dateSel.value = today;
-            _util.loadData(today);
-            setInterval(() => _util.loadData(dateSel.value), 5000);
-            new QRious({ element: document.getElementById('qrcode-canvas'), value: CAFE_WEB_URL, size: 600, level: 'M', padding: 0 });
             
-            const triggerIds = ['calendar-trigger-pc', 'calendar-trigger-mobile'];
-            triggerIds.forEach(id => {
-                const el = document.getElementById(id);
-                if(el) el.onclick = () => dateSel.showPicker();
-            });
-            dateSel.onchange = (e) => { lastDataHash = ""; _util.loadData(e.target.value); };
+            const dateSel = initCalendar();
+            const today = _util.getTodayStr();
+            dateSel.value = today;
+            
+            // Initial load
+            _util.loadData(today, renderWod);
+            
+            // Polling
+            setInterval(() => _util.loadData(dateSel.value, renderWod), 5000);
+            
+            initQR();
+            
+            dateSel.onchange = (e) => { 
+                // We need to reset hash because it's a new date, but loadData handles hash check. 
+                // However, app.js hash check includes dateStr, so sticking to app.js logic is fine.
+                // But app.js needs to know if we force reload. 
+                // The original code did `lastDataHash = ""` on change.
+                // We can just rely on the fact that dateStr changes, so the hash changes.
+                // BUT if we switch back to a date we already visited... app.js logic handles it ONLY if the data didn't change.
+                _util.loadData(e.target.value, renderWod); 
+            };
         };
     </script>
 </body>
