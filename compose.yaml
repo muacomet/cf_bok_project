@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  sso-was:
+    image: tomcat:8.5-jdk8
+    container_name: crossfit-bok
+    ports:
+      - "18080:18080"  # 18080 포트 하나로 통합
+    volumes:
+      - /volume1/docker/cf_bok/webapps/:/usr/local/tomcat/webapps/
+      - /volume1/docker/cf_bok/tomcat_conf/:/usr/local/tomcat/conf/
+      - /volume1/docker/cf_bok/database_backup:/usr/local/tomcat/webapps/database_backup
+    environment:
+      - TZ=Asia/Seoul
+      - JAVA_OPTS=-Xms1024m -Xmx2048m
+    restart: always
+    networks:
+     - sso-network
+
+networks:
+  sso-network:
+    external: true

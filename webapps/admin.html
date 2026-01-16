@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WOD Admin Panel | CROSSFIT BOK</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --font-main: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Apple SD Gothic Neo", "Malgun Gothic", "맑은 고딕", sans-serif;
+        }
+        body { background-color: #09090b; color: #f4f4f5; font-family: var(--font-main); }
+        
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            background: transparent; bottom: 0; color: transparent; cursor: pointer;
+            height: auto; left: 0; position: absolute; right: 0; top: 0; width: auto;
+        }
+
+        /* [수정] 입력창 스타일을 TV 화면과 유사하게 세팅 */
+        textarea#input-movements { 
+            resize: none; 
+            background-color: #18181b; 
+            /* TV 화면과 동일한 밀도 적용 */
+            line-height: 1.15; 
+            letter-spacing: -0.03em;
+            font-weight: 600;
+        }
+
+        .whitespace-pre-wrap { white-space: pre-wrap; word-break: break-all; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 10px; }
+        
+        .guide-box { animation: fadeIn 0.5s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .edit-mode { border-color: #3b82f6 !important; background-color: #0a192f !important; }
+        .input-dark { background-color: #18181b; border-color: #27272a; color: white; }
+        .input-dark:focus { border-color: #E7FE52; outline: none; border-width: 1px; }
+    </style>
+</head>
+<body class="min-h-screen p-4 md:p-8" onload="init()">
+    <div class="max-w-5xl mx-auto space-y-8">
+        <header class="flex flex-col md:flex-row justify-between items-center bg-zinc-900 p-6 rounded-2xl shadow-2xl border border-zinc-800 gap-6">
+            <div class="flex flex-col md:flex-row items-center gap-6 w-full md:w-auto">
+                <h1 class="text-2xl font-black italic text-[#E7FE52] flex-shrink-0 tracking-tighter uppercase">BOK 관리자 설정</h1>
+                <div class="flex items-center gap-3 bg-black p-2 pl-4 rounded-xl border border-zinc-800 w-full md:w-auto">
+                    <span class="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Target Date</span>
+                    <div class="relative h-10 w-48">
+                        <input type="date" id="target-date" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-30" onchange="fetchDataByDate()">
+                        <div class="absolute inset-0 z-10 flex items-center justify-between bg-zinc-900 border border-zinc-700 px-3 py-1 rounded-lg pointer-events-none">
+                            <span id="formatted-date-display" class="font-bold text-[#E7FE52] text-sm">0000-00-00 (-)</span>
+                            <i data-lucide="calendar" class="w-4 h-4 text-[#E7FE52]"></i>
+                        </div>
+                    </div>
+                </div>
+                <button onclick="downloadExcel()" class="flex items-center gap-2 bg-[#E7FE52] text-black px-5 py-2.5 rounded-xl font-bold text-sm hover:brightness-110 transition shadow-lg active:scale-95 w-full md:w-auto justify-center">
+                    <i data-lucide="download" class="w-4 h-4"></i> 기록 추출 (CSV)
+                </button>
+            </div>
+            <a href="index.html" target="_blank" class="text-xs font-bold text-zinc-400 bg-zinc-800 px-5 py-2.5 rounded-xl border border-zinc-700 hover:text-white hover:border-zinc-500 transition flex-shrink-0 flex items-center gap-2">
+                TV 전광판 보기 <i data-lucide="external-link" class="w-3 h-3"></i>
+            </a>
+        </header>
+
+        <div class="grid md:grid-cols-2 gap-8">
+            <section class="bg-zinc-900 p-6 rounded-2xl shadow-xl border border-zinc-800 h-fit">
+                <h2 class="text-xl font-bold mb-6 flex items-center gap-2 text-zinc-100">
+                    <i data-lucide="zap" class="text-[#E7FE52] w-5 h-5 fill-[#E7FE52]"></i> WOD 설정
+                </h2>
+                <div class="space-y-5">
+                    <div>
+                        <label class="block text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-1 ml-1">WOD Title</label>
+                        <input type="text" id="input-title" class="w-full input-dark p-3 border rounded-xl focus:outline-none focus:border-[#E7FE52] transition-all font-bold text-lg" placeholder="오늘의 WOD 제목">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-1 ml-1">Movement List (엔터 = 새 항목 / [next] = 줄바꿈)</label>
+                        <textarea id="input-movements" rows="10" oninput="autoResize(this)" class="w-full input-dark p-3 border rounded-xl focus:outline-none focus:border-[#E7FE52] min-h-[250px]" placeholder="동작을 입력하세요."></textarea>
+                        
+                        <div class="mt-3 bg-zinc-800/50 p-3 rounded-xl border border-zinc-700/50 guide-box">
+                            <p class="text-[11px] font-bold text-[#E7FE52] mb-1.5 flex items-center gap-1">
+                                <i data-lucide="info" class="w-3.5 h-3.5"></i> 전광판 표시 팁
+                            </p>
+                            <ul class="text-[11px] text-zinc-400 space-y-1.5 ml-1">
+                                <li class="flex items-start gap-1.5">
+                                    <span class="text-zinc-200 font-mono bg-zinc-700 px-1 rounded">[next]</span>
+                                    <span>한 항목 내에서 <b class="text-zinc-200">줄바꿈</b> (엔터보다 간격이 좁음)</span>
+                                </li>
+                                <li class="flex items-start gap-1.5">
+                                    <span class="text-zinc-200 font-mono bg-zinc-700 px-1 rounded">Enter</span>
+                                    <span>새로운 항목 시작 <b class="text-zinc-200">(여백 생김)</b></span>
+                                </li>
+                                <li class="flex items-start gap-1.5">
+                                    <span class="text-zinc-200 font-mono bg-zinc-700 px-1 rounded">[next]내용</span>
+                                    <span>해당 항목부터 <b class="text-zinc-200">오른쪽 열</b>로 강제 이동</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <button onclick="saveWod()" class="w-full bg-zinc-100 text-black py-4 rounded-xl font-black uppercase hover:bg-white transition shadow-lg active:scale-[0.98]">WOD 업데이트</button>
+                </div>
+            </section>
+
+            <section class="bg-zinc-900 p-6 rounded-2xl shadow-xl border border-zinc-800 h-fit">
+                <h2 class="text-xl font-bold mb-6 flex items-center gap-2 text-zinc-100">
+                    <i data-lucide="trophy" class="w-5 h-5 text-orange-500"></i> <span id="record-form-title">기록 추가</span>
+                </h2>
+                <div id="record-form-container" class="space-y-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <input type="text" id="reg-name" placeholder="이름" class="w-full input-dark p-3 border rounded-xl focus:outline-none focus:border-[#E7FE52]">
+                        <input type="text" id="reg-level" placeholder="레벨 직접 입력" class="w-full input-dark p-3 border rounded-xl focus:outline-none focus:border-[#E7FE52]">
+                    </div>
+                    <div class="flex flex-wrap gap-1.5">
+                        <button onclick="setLevel('Rx\'d')" class="px-3 py-1.5 bg-zinc-800 border border-zinc-700 rounded-lg text-xs font-bold text-orange-500 hover:bg-orange-500 hover:text-white transition">Rx'd</button>
+                        <button onclick="setLevel('Level A')" class="px-3 py-1.5 bg-zinc-800 border border-zinc-700 rounded-lg text-xs font-bold text-green-500 hover:bg-green-500 hover:text-white transition">A</button>
+                        <button onclick="setLevel('Level B')" class="px-3 py-1.5 bg-zinc-800 border border-zinc-700 rounded-lg text-xs font-bold text-blue-500 hover:bg-blue-500 hover:text-white transition">B</button>
+                        <button onclick="setLevel('Level C')" class="px-3 py-1.5 bg-zinc-800 border border-zinc-700 rounded-lg text-xs font-bold text-purple-500 hover:bg-purple-500 hover:text-white transition">C</button>
+                        <button onclick="setLevel('Level D')" class="px-3 py-1.5 bg-zinc-800 border border-zinc-700 rounded-lg text-xs font-bold text-zinc-400 hover:bg-zinc-600 hover:text-white transition">D</button>
+                    </div>
+                    <textarea id="reg-result" placeholder="기록 결과" rows="3" oninput="autoResize(this)" class="w-full input-dark p-3 border rounded-xl focus:outline-none focus:border-[#E7FE52]"></textarea>
+                    
+                    <div class="flex gap-2 pt-2">
+                        <button id="btn-add-record" onclick="addRecord()" class="flex-1 bg-[#E7FE52] text-black py-4 rounded-xl font-black uppercase hover:brightness-110 transition-all">기록 등록</button>
+                        <button id="btn-cancel-edit" onclick="cancelEdit()" class="hidden px-6 bg-zinc-800 text-zinc-400 py-4 rounded-xl font-bold border border-zinc-700">취소</button>
+                    </div>
+                </div>
+                
+                <div class="mt-8 border-t border-zinc-800 pt-6">
+                    <h3 class="text-[10px] font-bold mb-4 text-zinc-500 uppercase tracking-widest ml-1">현재 날짜 저장된 기록</h3>
+                    <div id="admin-record-list" class="space-y-3 max-h-[400px] overflow-y-auto pr-2"></div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script>
+    let allData = {}; 
+    let currentData = { wod: { title: "", movements: [] }, records: [] };
+    let editIndex = -1;
+
+    function autoResize(textarea) {
+        textarea.style.height = 'auto';
+        textarea.style.height = textarea.scrollHeight + 'px';
+    }
+
+    function setLevel(val) {
+        document.getElementById('reg-level').value = val;
+    }
+
+    async function init() {
+        const now = new Date();
+        const offset = now.getTimezoneOffset() * 60000;
+        const todayStr = new Date(now.getTime() - offset).toISOString().split('T')[0];
+        document.getElementById('target-date').value = todayStr;
+        await fetchDataByDate();
+        if(window.lucide) lucide.createIcons();
+    }
+
+    async function fetchDataByDate() {
+        cancelEdit();
+        const selectedDate = document.getElementById('target-date').value;
+        const dateObj = new Date(selectedDate);
+        const dayOfWeek = dateObj.toLocaleDateString('ko-KR', { weekday: 'short' });
+        document.getElementById('formatted-date-display').innerText = `${selectedDate} (${dayOfWeek})`;
+
+        try {
+            const res = await fetch(`data.json?t=${new Date().getTime()}`);
+            allData = await res.json();
+            if (!allData[selectedDate]) allData[selectedDate] = { wod: { title: "", movements: [] }, records: [] };
+            currentData = allData[selectedDate];
+            renderAdmin();
+        } catch (e) { console.error("데이터 로드 오류:", e); }
+    }
+
+    function renderAdmin() {
+        document.getElementById('input-title').value = currentData.wod.title || "";
+        const moveEl = document.getElementById('input-movements');
+        // 저장된 배열을 다시 엔터(\n)로 합쳐서 텍스트 영역에 표시
+        moveEl.value = (currentData.wod.movements || []).join('\n');
+        setTimeout(() => autoResize(moveEl), 50);
+
+        const recordList = document.getElementById('admin-record-list');
+        if (!currentData.records || currentData.records.length === 0) {
+            recordList.innerHTML = `<div class="text-center py-8 text-zinc-600 text-sm italic">기록이 없습니다.</div>`;
+            return;
+        }
+
+        recordList.innerHTML = currentData.records.map((r, i) => `
+            <div class="flex justify-between items-start bg-black/60 p-4 rounded-xl border border-zinc-800 text-sm transition-all hover:border-zinc-700">
+                <div class="flex-1">
+                    <div class="flex items-center gap-2">
+                        <span class="font-bold text-zinc-100 text-base">${r.name}</span> 
+                        <span class="bg-zinc-800 text-zinc-400 px-2 py-0.5 rounded text-[10px] font-bold uppercase border border-zinc-700">${r.level}</span>
+                    </div>
+                    <div class="text-[#E7FE52] font-mono whitespace-pre-wrap mt-2 opacity-90">${r.result}</div>
+                </div>
+                <div class="flex gap-1.5 ml-4 flex-shrink-0">
+                    <button onclick="startEdit(${i})" class="bg-[#E7FE52] text-black px-3 py-1.5 rounded-lg text-[11px] font-black hover:brightness-110 active:scale-95 transition-all">수정</button>
+                    <button onclick="deleteRecord(${i})" class="bg-[#E7FE52] text-black px-3 py-1.5 rounded-lg text-[11px] font-black hover:brightness-110 active:scale-95 transition-all">삭제</button>
+                </div>
+            </div>
+        `).join('');
+        if(window.lucide) lucide.createIcons();
+    }
+
+    function startEdit(index) {
+        editIndex = index;
+        const record = currentData.records[index];
+        document.getElementById('reg-name').value = record.name;
+        document.getElementById('reg-level').value = record.level;
+        document.getElementById('reg-result').value = record.result;
+        
+        document.getElementById('record-form-title').innerText = "기록 수정 중";
+        document.getElementById('record-form-container').classList.add('edit-mode');
+        document.getElementById('btn-add-record').innerText = "수정 완료 (저장)";
+        document.getElementById('btn-add-record').classList.replace('bg-[#E7FE52]', 'bg-blue-600');
+        document.getElementById('btn-add-record').classList.replace('text-black', 'text-white');
+        document.getElementById('btn-cancel-edit').classList.remove('hidden');
+        
+        autoResize(document.getElementById('reg-result'));
+        document.getElementById('reg-name').focus();
+    }
+
+    function cancelEdit() {
+        editIndex = -1;
+        document.getElementById('reg-name').value = '';
+        document.getElementById('reg-level').value = '';
+        document.getElementById('reg-result').value = '';
+        
+        document.getElementById('record-form-title').innerText = "기록 추가";
+        document.getElementById('record-form-container').classList.remove('edit-mode');
+        document.getElementById('btn-add-record').innerText = "기록 등록";
+        document.getElementById('btn-add-record').classList.replace('bg-blue-600', 'bg-[#E7FE52]');
+        document.getElementById('btn-add-record').classList.replace('text-white', 'text-black');
+        document.getElementById('btn-cancel-edit').classList.add('hidden');
+        autoResize(document.getElementById('reg-result'));
+    }
+
+    function addRecord() {
+        const nameInput = document.getElementById('reg-name');
+        const levelInput = document.getElementById('reg-level');
+        const resultInput = document.getElementById('reg-result');
+
+        if(!nameInput.value.trim() || !levelInput.value.trim()) return alert('이름과 레벨을 입력하세요');
+
+        const recordData = { 
+            name: nameInput.value.trim(), 
+            level: levelInput.value.trim(), 
+            result: resultInput.value 
+        };
+
+        if (editIndex > -1) currentData.records[editIndex] = recordData;
+        else currentData.records.push(recordData);
+        
+        cancelEdit();
+        renderAdmin();
+        updateServer();
+    }
+
+    async function updateServer() {
+        const selectedDate = document.getElementById('target-date').value;
+        allData[selectedDate] = currentData;
+        try {
+            await fetch('save_data.jsp', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(allData)
+            });
+        } catch (e) { alert('서버 저장 실패'); }
+    }
+
+    function deleteRecord(index) {
+        if(confirm('이 기록을 삭제하시겠습니까?')) {
+            currentData.records.splice(index, 1);
+            renderAdmin();
+            updateServer();
+        }
+    }
+
+    function saveWod() {
+        currentData.wod.title = document.getElementById('input-title').value;
+        // 엔터(\n)를 기준으로 배열로 만들어 저장
+        currentData.wod.movements = document.getElementById('input-movements').value.split('\n');
+        updateServer();
+        alert('WOD가 성공적으로 저장되었습니다.');
+    }
+
+    function downloadExcel() {
+        const selectedDate = document.getElementById('target-date').value;
+        if (!currentData || !currentData.records || currentData.records.length === 0) {
+            alert(`${selectedDate} 날짜에 저장된 기록이 없습니다.`);
+            return;
+        }
+        let csvContent = "\uFEFF"; 
+        csvContent += "날짜,WOD 제목,레벨,이름,기록\n";
+        const title = (currentData.wod.title || "제목 없음").replace(/,/g, " ");
+        currentData.records.forEach(r => {
+            csvContent += [selectedDate, title, r.level, r.name, `"${r.result.replace(/\n/g, " ")}"`].join(",") + "\n";
+        });
+        const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.setAttribute("href", url);
+        link.setAttribute("download", `BOK_Record_${selectedDate}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+    </script>
+</body>
+</html>
