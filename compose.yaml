@@ -7,16 +7,19 @@ services:
     ports:
       - "18080:18080"  # 18080 포트 하나로 통합
     volumes:
-      - /volume1/docker/cf_bok/webapps/:/usr/local/tomcat/webapps/
-      - /volume1/docker/cf_bok/tomcat_conf/:/usr/local/tomcat/conf/
-      - /volume1/docker/cf_bok/database_backup:/usr/local/tomcat/webapps/database_backup
+      - ./webapps/:/usr/local/tomcat/webapps/
+      - ./tomcat_conf/:/usr/local/tomcat/conf/
+      - ./database_backup:/usr/local/tomcat/webapps/database_backup
+      # - /volume1/docker/cf_bok/webapps/:/usr/local/tomcat/webapps/
+      # - /volume1/docker/cf_bok/tomcat_conf/:/usr/local/tomcat/conf/
+      # - /volume1/docker/cf_bok/database_backup:/usr/local/tomcat/webapps/database_backup
     environment:
       - TZ=Asia/Seoul
       - JAVA_OPTS=-Xms1024m -Xmx2048m
     restart: always
-    networks:
-     - sso-network
+    # networks:
+    #  - sso-network
 
-networks:
-  sso-network:
-    external: true
+# networks:
+#   sso-network:
+#     external: true
