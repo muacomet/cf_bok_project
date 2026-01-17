@@ -174,6 +174,17 @@
         <main id="main-container" class="main-content">
             <section
                 class="bg-zinc-900/90 p-5 lg:p-14 rounded-[1.5rem] lg:rounded-[3rem] border-2 border-zinc-800 shadow-2xl flex flex-col min-h-0 overflow-hidden">
+                <!-- Notice Section (Hidden by default, shown if content exists) -->
+                <div id="notice-container" class="hidden mb-6 border-b-2 border-zinc-800 pb-6">
+                    <div class="flex items-center gap-3 lg:gap-6 mb-2">
+                        <i data-lucide="megaphone" class="text-orange-500 w-6 h-6 lg:w-10 lg:h-10"></i>
+                        <h2 class="text-xl lg:text-4xl font-title uppercase tracking-tight text-white">Notice</h2>
+                    </div>
+                    <div id="notice-content"
+                        class="text-lg lg:text-3xl text-[#E7FE52] font-semibold whitespace-pre-wrap leading-relaxed">
+                    </div>
+                </div>
+
                 <div
                     class="flex items-center gap-3 lg:gap-6 mb-3 lg:mb-8 border-b-2 border-zinc-800 pb-2 lg:pb-6 flex-shrink-0">
                     <i data-lucide="zap" class="text-[#E7FE52] w-8 h-8 lg:w-14 lg:h-14 fill-[#E7FE52]"></i>
@@ -182,6 +193,11 @@
                 <div id="wod-content-area">
                     <h3 class="text-xl lg:text-7xl text-[#E7FE52] mb-3 lg:mb-10 font-title flex-shrink-0"
                         id="wod-title">불러오는 중...</h3>
+                    <!-- Summary (Optional) -->
+                    <div id="wod-summary"
+                        class="hidden mb-4 p-4 bg-zinc-800/50 rounded-xl text-zinc-300 text-lg lg:text-2xl whitespace-pre-wrap">
+                    </div>
+
                     <div id="wod-movements" class="wod-container"></div>
                 </div>
             </section>
@@ -209,8 +225,29 @@
         const renderDashboard = (dayData) => {
             dayData = dayData || { wod: { title: "등록된 WOD가 없습니다.", movements: [] }, records: [] };
 
+            // 1. Render Notice
+            const noticeEl = document.getElementById('notice-content');
+            const noticeContainer = document.getElementById('notice-container');
+            if (dayData.notice && dayData.notice.trim().length > 0) {
+                noticeEl.innerText = dayData.notice;
+                noticeContainer.classList.remove('hidden');
+            } else {
+                noticeContainer.classList.add('hidden');
+            }
+
+            // 2. Render WOD Title
             document.getElementById('wod-title').innerText = dayData.wod.title;
 
+            // 3. Render Summary (if exists)
+            const summaryEl = document.getElementById('wod-summary');
+            if (dayData.wod.summary && dayData.wod.summary.trim().length > 0) {
+                summaryEl.innerText = dayData.wod.summary;
+                summaryEl.classList.remove('hidden');
+            } else {
+                summaryEl.classList.add('hidden');
+            }
+
+            // 4. Render Movements
             const movementsHtml = (dayData.wod.movements || [])
                 .map(m => {
                     const isColumnBreak = m.trim().startsWith("[next]");

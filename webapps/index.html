@@ -152,9 +152,6 @@
                     <i data-lucide="clipboard-list" class="text-[#E7FE52] w-8 h-8 lg:w-12 lg:h-12"></i>
                     <h2 class="text-xl lg:text-5xl font-title uppercase tracking-tight text-white">오늘의 훈련</h2>
                 </div>
-                <div class="mb-4 lg:mb-8 text-zinc-400 text-lg lg:text-2xl">
-                    오늘의 훈련 내용 (상단 WOD 참조)
-                </div>
                 <!-- Content (Mirroring WOD for now) -->
                 <div id="wod-content-col2" class="card-content"></div>
             </section>
@@ -175,18 +172,11 @@
                     </div>
                 </div>
 
-                <div class="card-content text-xl lg:text-3xl text-zinc-300 space-y-4 lg:space-y-8 font-semibold">
-                    <p>BOK 카페 QR 코드 안내 (상단 중앙)</p>
-                    <p>현재 시간: <span id="clock-notice">00:00:00</span> (상단 우측)</p>
-                    <div class="mt-8 border-t border-zinc-700 pt-8 text-zinc-400">
-                        <p>대회 및 크로스핏 박스 안내 사항이 표시되는 공간입니다.</p>
-                        <p class="mt-4 text-[#E7FE52]">• 2026년 1월 회원권 이벤트 진행 중</p>
-                        <p class="mt-2 text-[#E7FE52]">• 이번 주 토요일 14:00 팀 와드</p>
-                    </div>
-                </div>
+                <!-- Standardized Content Container -->
+                <div id="notice-content-col3" class="card-content"></div>
 
                 <!-- Decor -->
-                <i data-lucide="sparkles" class="absolute bottom-6 right-6 w-16 h-16 text-zinc-700"></i>
+                <!-- Decor Removed -->
             </section>
         </main>
     </div>
@@ -205,8 +195,8 @@
             // Col 1 Title
             document.getElementById('wod-title-col1').innerText = dayData.wod.title;
 
-            // Helper to generate HTML
-            const generateHtml = (movements) => (movements || [])
+            // Helper to generate HTML from array (for WOD Guide)
+            const generateWodHtml = (movements) => (movements || [])
                 .map(m => {
                     let content = m.replace(/\[next\]/g, "<br>").trim();
                     if (content === "") content = "&nbsp;";
@@ -214,10 +204,39 @@
                 })
                 .join('');
 
-            // Render Col 1 & Col 2 (Using same content for now)
-            const html = generateHtml(dayData.wod.movements);
-            document.getElementById('wod-content-col1').innerHTML = html;
-            document.getElementById('wod-content-col2').innerHTML = html;
+            // Helper for simple text (Summary / Notice) - Handles \n to <br>
+            const generateTextHtml = (text) => {
+                if (!text) return "";
+                return text.split('\n').map(line => {
+                    if (line.trim() === "") return "<br>";
+                    return `<div>${line}</div>`;
+                }).join('');
+            };
+
+            // 1. WOD Guide (Left)
+            document.getElementById('wod-content-col1').innerHTML = generateWodHtml(dayData.wod.movements);
+
+            // 2. Today's Workout (Center) - Use summary if exists, else WOD movements
+            const summaryContent = dayData.wod.summary
+                ? `<div class="wod-item" style="font-size: calc(2.4rem * var(--wod-zoom))">${generateTextHtml(dayData.wod.summary)}</div>`
+                : generateWodHtml(dayData.wod.movements);
+            document.getElementById('wod-content-col2').innerHTML = summaryContent;
+
+            // 3. Notices (Right) - Use notice if exists, else default static
+            const noticeContainer = document.getElementById('notice-content-col3');
+            if (dayData.notice && dayData.notice.trim().length > 0) {
+                // Use same structure as Summary but add yellow color
+                noticeContainer.innerHTML = `<div class="wod-item text-[#E7FE52]" style="font-size: calc(2.4rem * var(--wod-zoom))">${generateTextHtml(dayData.notice)}</div>`;
+            } else {
+                // Default Static
+                const defaultHtml = `
+                    <div class="text-zinc-400" style="font-size: calc(1.5rem * var(--wod-zoom))">
+                        <p>대회 및 크로스핏 박스 안내 사항이 표시되는 공간입니다.</p>
+                        <p class="mt-4 text-[#E7FE52]">• 2026년 1월 회원권 이벤트 진행 중</p>
+                        <p class="mt-2 text-[#E7FE52]">• 이번 주 토요일 14:00 팀 와드</p>
+                    </div>`;
+                noticeContainer.innerHTML = defaultHtml;
+            }
         };
 
         window.onload = () => {
