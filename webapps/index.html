@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,44 +10,44 @@
     <script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
     <link rel="stylesheet" href="css/style.css">
     <style>
-        .wod-container { 
-            display: block; 
-            height: 100%; 
-            column-width: 800px; 
+        .wod-container {
+            display: block;
+            height: 100%;
+            column-width: 800px;
             column-gap: 6rem;
-            column-fill: auto; 
+            column-fill: auto;
             padding-bottom: 5rem;
             box-sizing: border-box;
         }
 
         @media (max-width: 1023px) {
-            .wod-container { 
-                column-width: 100%; 
+            .wod-container {
+                column-width: 100%;
                 column-gap: 0;
                 padding-bottom: 2rem;
             }
         }
 
-        .wod-item { 
+        .wod-item {
             font-family: var(--font-main);
             font-style: normal !important;
-            line-height: 1.2; 
-            white-space: pre-wrap; 
-            word-break: break-word; 
-            font-weight: 600; 
-            color: #f4f4f5; 
-            letter-spacing: -0.02em; 
+            line-height: 1.2;
+            white-space: pre-wrap;
+            word-break: break-word;
+            font-weight: 600;
+            color: #f4f4f5;
+            letter-spacing: -0.02em;
             display: block;
             width: 100%;
             break-inside: avoid-column;
-            font-size: calc(1.25rem * var(--wod-zoom)); 
+            font-size: calc(1.25rem * var(--wod-zoom));
             margin-bottom: calc(0.8rem * var(--wod-zoom));
         }
 
         @media (min-width: 1024px) {
-            .wod-item { 
-                font-size: calc(3.2rem * var(--wod-zoom)); 
-                margin-bottom: calc(1.8rem * var(--wod-zoom)); 
+            .wod-item {
+                font-size: calc(3.2rem * var(--wod-zoom));
+                margin-bottom: calc(1.8rem * var(--wod-zoom));
             }
         }
 
@@ -60,77 +61,132 @@
             align-items: center;
             justify-content: center;
         }
-        .zoom-btn:hover { background: #3f3f46; color: #E7FE52; }
-        .zoom-btn:active { transform: scale(0.9); }
+
+        .zoom-btn:hover {
+            background: #3f3f46;
+            color: #E7FE52;
+        }
+
+        .zoom-btn:active {
+            transform: scale(0.9);
+        }
     </style>
 </head>
+
 <body class="lg:p-0">
     <div id="scaling-container">
-        <header class="border-b-2 border-[#E7FE52]/30 flex-shrink-0 p-4 lg:p-0">
-            <div class="flex flex-row justify-between items-center w-full lg:pb-0 lg:pt-0">
-                <div class="flex items-center gap-4 lg:gap-10">
-                    <a href="https://cafe.naver.com/cfbok" target="_blank" class="flex-shrink-0 active:scale-95 transition-transform">
-                        <img src="image_f21f01.png" alt="Logo" class="w-16 h-16 lg:w-40 lg:h-40 object-contain rounded-2xl lg:rounded-[2rem] shadow-xl border-2 border-zinc-800">
+        <!-- Header -->
+        <header class="flex-shrink-0 p-4 lg:p-0">
+            <div class="flex flex-row justify-between items-center w-full">
+                <!-- Left: Logo -->
+                <div class="flex items-center gap-4 lg:gap-8">
+                    <a href="https://cafe.naver.com/cfbok" target="_blank"
+                        class="flex-shrink-0 active:scale-95 transition-transform">
+                        <img src="image_f21f01.png" alt="Logo"
+                            class="w-16 h-16 lg:w-32 lg:h-32 object-contain bg-[#E7FE52] rounded-2xl lg:rounded-[2rem] shadow-xl border-4 border-[#E7FE52]">
                     </a>
-                    <div class="flex flex-col">
-                        <h1 class="hidden lg:block text-7xl font-title text-[#E7FE52] uppercase leading-none">CROSSFIT BOK</h1>
-                        <div class="hidden lg:flex date-input-wrapper mt-4 items-center gap-4 text-zinc-400 font-bold" id="calendar-trigger-pc" style="position: relative; cursor: pointer;">
-                            <span class="display-date text-4xl whitespace-nowrap">날짜 로딩 중...</span>
-                            <i data-lucide="calendar" class="w-10 h-10"></i>
+
+                    <div class="flex flex-col justify-center">
+                        <h1
+                            class="hidden lg:block text-7xl font-title text-[#E7FE52] uppercase leading-none tracking-tighter">
+                            CROSSFIT BOK</h1>
+                        <div class="flex items-center gap-3 text-zinc-400 font-bold mt-2" id="calendar-trigger-pc"
+                            style="cursor: pointer;">
+                            <span class="display-date text-3xl whitespace-nowrap">DATE LOADING...</span>
+                            <i data-lucide="calendar" class="w-8 h-8"></i>
                         </div>
                     </div>
                 </div>
 
-                <div class="lg:hidden flex flex-col items-end gap-1">
-                    <div class="date-input-wrapper flex items-center gap-2 text-zinc-400 font-bold" id="calendar-trigger-mobile" style="position: relative; cursor: pointer;">
-                        <span class="display-date text-sm whitespace-nowrap">날짜 로딩 중...</span>
-                        <i data-lucide="calendar" class="w-3.5 h-3.5"></i>
-                    </div>
-                    <div class="flex items-center gap-2 text-white font-timer">
-                        <div id="ampm-mobile" class="text-[10px] font-bold text-zinc-500 uppercase">오전</div>
-                        <div id="clock-mobile" class="text-2xl leading-none tracking-tighter">00:00:00</div>
+                <div class="lg:hidden">
+                    <!-- Mobile View Simplified -->
+                    <div class="date-input-wrapper flex items-center gap-2 text-zinc-400 font-bold"
+                        id="calendar-trigger-mobile">
+                        <span class="display-date text-sm">...</span>
                     </div>
                 </div>
 
-                <div class="hidden lg:flex items-center gap-12 lg:pb-2">
-                    <div class="flex items-center bg-zinc-900/80 px-8 py-4 rounded-[2.5rem] border-2 border-[#E7FE52]/20 gap-6 shadow-2xl">
-                        <span class="text-[#E7FE52] font-title text-3xl italic leading-tight text-center">BOK<br>카페</span>
-                        <div class="bg-white rounded-xl w-36 h-36 flex items-center justify-center overflow-hidden">
+                <!-- Right: QR + Clock (PC Only) -->
+                <div class="hidden lg:flex items-center gap-8">
+                    <!-- QR Box -->
+                    <div class="flex items-center bg-zinc-900/80 px-5 py-3 rounded-[2rem] border border-zinc-700 gap-4">
+                        <span
+                            class="text-[#E7FE52] font-title text-2xl italic leading-tight text-center">BOK<br>카페</span>
+                        <div class="bg-white rounded-xl w-24 h-24 flex items-center justify-center overflow-hidden p-1">
                             <canvas id="qrcode-canvas"></canvas>
                         </div>
                     </div>
-                    <div class="flex items-center gap-6 text-white font-timer">
-                        <div id="ampm-pc" class="text-5xl font-bold text-zinc-500">오전</div>
-                        <div id="clock-pc" class="text-[10rem] leading-none tracking-tighter" style="min-width: 8.5ch; text-align: right;">00:00:00</div>
+
+                    <!-- Clock -->
+                    <div class="flex items-center gap-4 text-white font-timer">
+                        <div id="ampm-pc" class="text-4xl font-bold text-zinc-500 mb-2">오전</div>
+                        <div id="clock-pc" class="text-[8rem] leading-none tracking-tighter"
+                            style="font-variant-numeric: tabular-nums;">00:00:00</div>
                     </div>
                 </div>
+
                 <input type="date" id="date-selector" style="position: absolute; opacity: 0; pointer-events: none;">
             </div>
         </header>
 
+        <!-- Main Content: 3 Columns -->
         <main id="main-container" class="main-content">
-            <section class="bg-zinc-900/90 p-5 lg:p-14 rounded-[1.5rem] lg:rounded-[3rem] border-2 border-zinc-800 shadow-2xl flex flex-col h-full min-h-0 overflow-hidden">
-                <div class="flex items-center justify-between mb-3 lg:mb-8 border-b-2 border-zinc-800 pb-2 lg:pb-6 flex-shrink-0">
-                    <div class="flex items-center gap-3 lg:gap-6">
-                        <i data-lucide="zap" class="text-[#E7FE52] w-8 h-8 lg:w-14 lg:h-14 fill-[#E7FE52]"></i>
-                        <h2 class="text-xl lg:text-6xl font-title uppercase tracking-tight">Today's Wod</h2>
+            <!-- Col 1: WOD Guide (Full) -->
+            <section class="dashboard-card">
+                <div class="card-header">
+                    <i data-lucide="zap" class="text-[#E7FE52] w-8 h-8 lg:w-12 lg:h-12 fill-[#E7FE52]"></i>
+                    <h2 class="text-xl lg:text-5xl font-title uppercase tracking-tight text-white">WOD 안내 페이지</h2>
+                </div>
+                <!-- Title Display -->
+                <div class="mb-4 lg:mb-8">
+                    <h3 class="text-lg lg:text-4xl text-[#E7FE52] font-title leading-tight" id="wod-title-col1">
+                        loading...</h3>
+                </div>
+                <!-- Content -->
+                <div id="wod-content-col1" class="card-content"></div>
+            </section>
+
+            <!-- Col 2: Today's Workout (Summary/Highlight) -->
+            <section class="dashboard-card">
+                <div class="card-header">
+                    <i data-lucide="clipboard-list" class="text-[#E7FE52] w-8 h-8 lg:w-12 lg:h-12"></i>
+                    <h2 class="text-xl lg:text-5xl font-title uppercase tracking-tight text-white">오늘의 훈련</h2>
+                </div>
+                <div class="mb-4 lg:mb-8 text-zinc-400 text-lg lg:text-2xl">
+                    오늘의 훈련 내용 (상단 WOD 참조)
+                </div>
+                <!-- Content (Mirroring WOD for now) -->
+                <div id="wod-content-col2" class="card-content"></div>
+            </section>
+
+            <!-- Col 3: Notices -->
+            <section class="dashboard-card relative">
+                <div class="card-header justify-between">
+                    <div class="flex items-center gap-4">
+                        <h2 class="text-xl lg:text-5xl font-title uppercase tracking-tight text-white">공지사항</h2>
                     </div>
-                    
-                    <div class="flex items-center gap-2 lg:gap-4 bg-black/40 p-1.5 lg:p-3 rounded-xl lg:rounded-2xl border border-zinc-800">
-                        <span class="hidden lg:block text-zinc-500 font-bold text-xl uppercase tracking-widest mr-2">Font</span>
-                        <button onclick="changeWodSize(-0.1)" class="zoom-btn w-8 h-8 lg:w-16 lg:h-16 rounded-lg lg:rounded-xl">
-                            <i data-lucide="minus" class="w-4 h-4 lg:w-8 lg:h-8"></i>
-                        </button>
-                        <button onclick="changeWodSize(0.1)" class="zoom-btn w-8 h-8 lg:w-16 lg:h-16 rounded-lg lg:rounded-xl">
-                            <i data-lucide="plus" class="w-4 h-4 lg:w-8 lg:h-8"></i>
-                        </button>
+                    <!-- Font Control (Moved here) -->
+                    <div class="flex items-center gap-2 bg-black/40 p-2 rounded-xl border border-zinc-800">
+                        <span class="text-zinc-500 font-bold text-sm uppercase mr-2">FONT</span>
+                        <button onclick="changeWodSize(-0.1)" class="zoom-btn w-8 h-8 rounded-lg"><i data-lucide="minus"
+                                class="w-4 h-4"></i></button>
+                        <button onclick="changeWodSize(0.1)" class="zoom-btn w-8 h-8 rounded-lg"><i data-lucide="plus"
+                                class="w-4 h-4"></i></button>
                     </div>
                 </div>
-                
-                <div id="wod-content-area">
-                    <h3 class="text-xl lg:text-7xl text-[#E7FE52] mb-3 lg:mb-10 font-title flex-shrink-0" id="wod-title">불러오는 중...</h3>
-                    <div id="wod-movements" class="wod-container"></div>
+
+                <div class="card-content text-xl lg:text-3xl text-zinc-300 space-y-4 lg:space-y-8 font-semibold">
+                    <p>BOK 카페 QR 코드 안내 (상단 중앙)</p>
+                    <p>현재 시간: <span id="clock-notice">00:00:00</span> (상단 우측)</p>
+                    <div class="mt-8 border-t border-zinc-700 pt-8 text-zinc-400">
+                        <p>대회 및 크로스핏 박스 안내 사항이 표시되는 공간입니다.</p>
+                        <p class="mt-4 text-[#E7FE52]">• 2026년 1월 회원권 이벤트 진행 중</p>
+                        <p class="mt-2 text-[#E7FE52]">• 이번 주 토요일 14:00 팀 와드</p>
+                    </div>
                 </div>
+
+                <!-- Decor -->
+                <i data-lucide="sparkles" class="absolute bottom-6 right-6 w-16 h-16 text-zinc-700"></i>
             </section>
         </main>
     </div>
@@ -139,51 +195,57 @@
     <script>
         // Page specific logic for index.html
         function changeWodSize(delta) {
-            // currentZoom is global in app.js
-            currentZoom = Math.max(0.5, Math.min(2.0, currentZoom + delta)); 
+            currentZoom = Math.max(0.5, Math.min(2.0, currentZoom + delta));
             document.documentElement.style.setProperty('--wod-zoom', currentZoom);
         }
 
         const renderWod = (data) => {
             const dayData = data || { wod: { title: "등록된 WOD가 없습니다.", movements: [] } };
-            document.getElementById('wod-title').innerText = dayData.wod.title;
-            
-            const movementsHtml = (dayData.wod.movements || [])
+
+            // Col 1 Title
+            document.getElementById('wod-title-col1').innerText = dayData.wod.title;
+
+            // Helper to generate HTML
+            const generateHtml = (movements) => (movements || [])
                 .map(m => {
                     let content = m.replace(/\[next\]/g, "<br>").trim();
                     if (content === "") content = "&nbsp;";
-                    return `<div class="wod-item">${content}</div>`;
+                    return `<div class="wod-item" style="font-size: calc(2.4rem * var(--wod-zoom)); margin-bottom: 1rem;">${content}</div>`;
                 })
                 .join('');
-            document.getElementById('wod-movements').innerHTML = movementsHtml;
+
+            // Render Col 1 & Col 2 (Using same content for now)
+            const html = generateHtml(dayData.wod.movements);
+            document.getElementById('wod-content-col1').innerHTML = html;
+            document.getElementById('wod-content-col2').innerHTML = html;
         };
 
         window.onload = () => {
+            const updateClockNotice = () => {
+                const now = new Date();
+                const timeStr = now.toLocaleTimeString('en-GB', { hour12: false });
+                const el = document.getElementById('clock-notice');
+                if (el) el.innerText = timeStr;
+            };
+
             _util.updateTime();
-            setInterval(_util.updateTime, 1000);
-            
+            updateClockNotice();
+            setInterval(() => { _util.updateTime(); updateClockNotice(); }, 1000);
+
             const dateSel = initCalendar();
             const today = _util.getTodayStr();
             dateSel.value = today;
-            
-            // Initial load
+
             _util.loadData(today, renderWod);
-            
-            // Polling
             setInterval(() => _util.loadData(dateSel.value, renderWod), 5000);
-            
+
             initQR();
-            
-            dateSel.onchange = (e) => { 
-                // We need to reset hash because it's a new date, but loadData handles hash check. 
-                // However, app.js hash check includes dateStr, so sticking to app.js logic is fine.
-                // But app.js needs to know if we force reload. 
-                // The original code did `lastDataHash = ""` on change.
-                // We can just rely on the fact that dateStr changes, so the hash changes.
-                // BUT if we switch back to a date we already visited... app.js logic handles it ONLY if the data didn't change.
-                _util.loadData(e.target.value, renderWod); 
+
+            dateSel.onchange = (e) => {
+                _util.loadData(e.target.value, renderWod);
             };
         };
     </script>
 </body>
+
 </html>
