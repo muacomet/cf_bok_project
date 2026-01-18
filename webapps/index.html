@@ -92,19 +92,14 @@
                             CROSSFIT BOK</h1>
                         <div class="flex items-center gap-3 text-zinc-400 font-bold mt-2" id="calendar-trigger-pc"
                             style="cursor: pointer;">
-                            <span class="display-date text-3xl whitespace-nowrap">DATE LOADING...</span>
+                            <span class="display-date text-xl lg:text-3xl whitespace-nowrap">DATE LOADING...</span>
                             <i data-lucide="calendar" class="w-8 h-8"></i>
                         </div>
                     </div>
                 </div>
 
-                <div class="lg:hidden">
-                    <!-- Mobile View Simplified -->
-                    <div class="date-input-wrapper flex items-center gap-2 text-zinc-400 font-bold"
-                        id="calendar-trigger-mobile">
-                        <span class="display-date text-sm">...</span>
-                    </div>
-                </div>
+                <!-- Mobile View Duplicate Removed -->
+
 
                 <!-- Right: QR + Clock (PC Only) -->
                 <div class="hidden lg:flex items-center gap-8">
@@ -216,26 +211,23 @@
             // 1. WOD Guide (Left)
             document.getElementById('wod-content-col1').innerHTML = generateWodHtml(dayData.wod.movements);
 
-            // 2. Today's Workout (Center) - Use summary if exists, else WOD movements
-            const summaryContent = dayData.wod.summary
-                ? `<div class="wod-item" style="font-size: calc(2.4rem * var(--wod-zoom))">${generateTextHtml(dayData.wod.summary)}</div>`
-                : generateWodHtml(dayData.wod.movements);
+            // 2. Today's Workout (Center)
+            let summaryContent = "";
+            if (dayData.wod.summary && dayData.wod.summary.trim().length > 0) {
+                summaryContent = `<div class="wod-item" style="font-size: calc(2.4rem * var(--wod-zoom))">${generateTextHtml(dayData.wod.summary)}</div>`;
+            } else if (dayData.wod.movements && dayData.wod.movements.length > 0) {
+                summaryContent = generateWodHtml(dayData.wod.movements);
+            } else {
+                summaryContent = `<div class="text-zinc-500 font-bold" style="font-size: calc(1.5rem * var(--wod-zoom))">등록된 훈련 내용이 없습니다.</div>`;
+            }
             document.getElementById('wod-content-col2').innerHTML = summaryContent;
 
-            // 3. Notices (Right) - Use notice if exists, else default static
+            // 3. Notices (Right)
             const noticeContainer = document.getElementById('notice-content-col3');
             if (dayData.notice && dayData.notice.trim().length > 0) {
-                // Use same structure as Summary but add yellow color
                 noticeContainer.innerHTML = `<div class="wod-item text-[#E7FE52]" style="font-size: calc(2.4rem * var(--wod-zoom))">${generateTextHtml(dayData.notice)}</div>`;
             } else {
-                // Default Static
-                const defaultHtml = `
-                    <div class="text-zinc-400" style="font-size: calc(1.5rem * var(--wod-zoom))">
-                        <p>대회 및 크로스핏 박스 안내 사항이 표시되는 공간입니다.</p>
-                        <p class="mt-4 text-[#E7FE52]">• 2026년 1월 회원권 이벤트 진행 중</p>
-                        <p class="mt-2 text-[#E7FE52]">• 이번 주 토요일 14:00 팀 와드</p>
-                    </div>`;
-                noticeContainer.innerHTML = defaultHtml;
+                noticeContainer.innerHTML = `<div class="text-zinc-500 font-bold" style="font-size: calc(1.5rem * var(--wod-zoom))">등록된 공지사항이 없습니다.</div>`;
             }
         };
 
