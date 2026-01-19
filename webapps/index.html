@@ -160,6 +160,8 @@
                     <!-- Font Control (Moved here) -->
                     <div class="flex items-center gap-2 bg-black/40 p-2 rounded-xl border border-zinc-800">
                         <span class="text-zinc-500 font-bold text-sm uppercase mr-2">FONT</span>
+                        <button onclick="autoFitWod()"
+                            class="zoom-btn w-12 h-8 rounded-lg text-xs font-bold text-zinc-400 hover:text-[#E7FE52]">AUTO</button>
                         <button onclick="changeWodSize(-0.1)" class="zoom-btn w-8 h-8 rounded-lg"><i data-lucide="minus"
                                 class="w-4 h-4"></i></button>
                         <button onclick="changeWodSize(0.1)" class="zoom-btn w-8 h-8 rounded-lg"><i data-lucide="plus"
@@ -182,6 +184,39 @@
         function changeWodSize(delta) {
             currentZoom = Math.max(0.5, Math.min(2.0, currentZoom + delta));
             document.documentElement.style.setProperty('--wod-zoom', currentZoom);
+        }
+
+        function autoFitWod() {
+            // Iteratively decrease zoom until content fits in all columns
+            let zoom = 1.3; // Check from max reasonable zoom
+            const minZoom = 0.5;
+            const step = 0.05;
+
+            const cols = [
+                document.getElementById('wod-content-col1'),
+                document.getElementById('wod-content-col2'),
+                document.getElementById('notice-content-col3')
+            ];
+
+            while (zoom >= minZoom) {
+                // Update variable
+                document.documentElement.style.setProperty('--wod-zoom', zoom);
+
+                // Check overflow
+                let overflow = false;
+                for (let col of cols) {
+                    if (col && col.scrollHeight > col.clientHeight) {
+                        overflow = true;
+                        break;
+                    }
+                }
+
+                if (!overflow) {
+                    break;
+                }
+                zoom -= step;
+            }
+            currentZoom = zoom;
         }
 
         const renderWod = (data) => {
