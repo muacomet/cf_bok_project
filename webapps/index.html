@@ -246,16 +246,36 @@
             // 1. WOD Guide (Left)
             document.getElementById('wod-content-col1').innerHTML = generateWodHtml(dayData.wod.movements);
 
-            // 2. Today's Workout (Center)
-            let summaryContent = "";
-            if (dayData.wod.summary && dayData.wod.summary.trim().length > 0) {
-                summaryContent = `<div class="wod-item" style="font-size: calc(2.4rem * var(--wod-zoom))">${generateTextHtml(dayData.wod.summary)}</div>`;
-            } else if (dayData.wod.movements && dayData.wod.movements.length > 0) {
-                summaryContent = generateWodHtml(dayData.wod.movements);
+            // 2. Today's Workout (Center) & Layout Adjustment
+            const centerCol = document.getElementById('wod-content-col2').parentElement; // Get the section element
+            const mainContainer = document.getElementById('main-container');
+
+            let hasSummary = dayData.wod.summary && dayData.wod.summary.trim().length > 0;
+
+            if (hasSummary) {
+                // Show Center
+                centerCol.style.display = 'flex';
+                // Reset Grid to 3 columns (Mobile will ignore this due to @media)
+                if (window.innerWidth >= 1024) {
+                    mainContainer.style.gridTemplateColumns = '1fr 1fr 1fr';
+                } else {
+                    mainContainer.style.gridTemplateColumns = 'none';
+                }
+
+                document.getElementById('wod-content-col2').innerHTML =
+                    `<div class="wod-item" style="font-size: calc(2.4rem * var(--wod-zoom))">${generateTextHtml(dayData.wod.summary)}</div>`;
             } else {
-                summaryContent = `<div class="text-zinc-500 font-bold" style="font-size: calc(1.5rem * var(--wod-zoom))">등록된 훈련 내용이 없습니다.</div>`;
+                // Hide Center
+                centerCol.style.display = 'none';
+                // Adjust Grid to 2 columns (Left: 2fr, Right: 1fr)
+                if (window.innerWidth >= 1024) {
+                    mainContainer.style.gridTemplateColumns = '2fr 1fr';
+                } else {
+                    mainContainer.style.gridTemplateColumns = 'none';
+                }
+
+                document.getElementById('wod-content-col2').innerHTML = "";
             }
-            document.getElementById('wod-content-col2').innerHTML = summaryContent;
 
             // 3. Notices (Right)
             const noticeContainer = document.getElementById('notice-content-col3');
