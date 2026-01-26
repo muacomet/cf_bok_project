@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CrossFit BOK</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;700&family=Noto+Sans+KR:wght@300;400;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --color-neon: #E7FE52;
+            --color-bg: #111;
+            --color-surface: #1C1C1E;
+            --font-main: 'Noto Sans KR', sans-serif;
+            --font-headings: 'Oswald', sans-serif;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background-color: var(--color-bg);
+            color: white;
+        }
+
+        h1,
+        h2,
+        h3,
+        .heading-font {
+            font-family: var(--font-headings);
+        }
+
+        .text-neon {
+            color: var(--color-neon);
+        }
+
+        .bg-neon {
+            background-color: var(--color-neon);
+        }
+
+        .border-neon {
+            border-color: var(--color-neon);
+        }
+
+        .hover-neon:hover {
+            color: var(--color-bg);
+            background-color: var(--color-neon);
+        }
+
+        /* Benchmark Layout Styles */
+        .section-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 4rem 1.5rem;
+        }
+
+        /* Schedule Grid */
+        .schedule-grid {
+            display: grid;
+            grid-template-columns: 80px repeat(6, 1fr);
+            /* Time + 6 Days (Mon-Sat) */
+            gap: 1px;
+        }
+
+        .schedule-cell {
+            padding: 0.5rem;
+            min-height: 60px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .schedule-title {
+            background-color: var(--color-neon);
+            color: black;
+            padding: 1.5rem;
+            text-align: center;
+            font-family: var(--font-headings);
+            font-size: 2.5rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .text-orange {
+            color: #ea580c;
+        }
+
+        /* For Open Gym text */
+    </style>
+</head>
+
+<body class="antialiased">
+
+    <!-- Header (Sticky) -->
+    <header class="fixed w-full top-0 z-50 bg-black/90 backdrop-blur border-b border-zinc-800">
+        <div class="flex items-center justify-between px-6 py-4 max-w-7xl mx-auto">
+            <!-- Logo -->
+            <div class="text-3xl font-bold tracking-tighter heading-font">
+                CROSSFIT <span class="text-neon">BOK</span>
+            </div>
+
+            <!-- Nav (Desktop) -->
+            <nav class="hidden md:flex items-center space-x-8 text-sm font-bold uppercase tracking-wider">
+                <a href="#hero" class="hover:text-neon transition">Home</a>
+                <a href="#concept" class="hover:text-neon transition">Concept</a>
+                <a href="#schedule" class="hover:text-neon transition">Time Table</a>
+                <a href="#access" class="hover:text-neon transition">Access</a>
+            </nav>
+
+            <!-- CTA -->
+            <div class="flex items-center space-x-4">
+                <a href="https://cafe.naver.com/cfbok" target="_blank"
+                    class="hidden md:inline-flex items-center justify-center px-4 py-2 border border-white text-white font-bold text-xs hover:bg-white hover:text-black transition rounded">
+                    Naver Cafe
+                </a>
+                <a href="https://www.instagram.com/cf.bok/" target="_blank"
+                    class="inline-flex items-center justify-center px-4 py-2 bg-neon text-black font-bold uppercase text-xs tracking-widest hover:bg-white transition rounded">
+                    Instagram
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="hero"
+        class="relative h-screen flex items-center justify-center text-center px-4 bg-zinc-900 overflow-hidden">
+        <div
+            class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1599058945522-28d584b6f0ff?q=80&w=2069&auto=format&fit=crop')] bg-cover bg-center opacity-40">
+        </div>
+
+        <div class="relative z-10 max-w-4xl mx-auto">
+            <h1 class="text-6xl md:text-8xl font-bold heading-font mb-6 tracking-tighter uppercase">
+                CrossFit <span class="text-neon">BOK</span>
+            </h1>
+            <p class="text-xl md:text-2xl text-gray-300 font-light mb-10 max-w-2xl mx-auto">
+                부천역 최고의 크로스핏 박스<br />
+                진정한 체력의 변화를 경험하세요
+            </p>
+            <div class="flex flex-col md:flex-row gap-4 justify-center">
+                <a href="#access"
+                    class="px-8 py-4 bg-neon text-black font-bold text-lg uppercase tracking-wider hover:bg-white transition rounded">
+                    찾아오시는 길
+                </a>
+                <a href="#schedule"
+                    class="px-8 py-4 border border-white text-white font-bold text-lg uppercase tracking-wider hover:bg-white hover:text-black transition rounded">
+                    시간표 확인
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Concept Section -->
+    <section id="concept" class="section-container text-center">
+        <h2 class="text-4xl md:text-5xl font-bold mb-4 heading-font uppercase">Why CF BOK?</h2>
+        <div class="w-20 h-1 bg-neon mx-auto mb-10"></div>
+
+        <div class="grid md:grid-cols-2 gap-12 items-center text-left">
+            <div class="space-y-6">
+                <h3 class="text-2xl font-bold text-neon">Authentic CrossFit</h3>
+                <p class="text-gray-400 leading-relaxed">
+                    크로스핏 BOK는 정통 크로스핏을 지향합니다.
+                    체조, 역도, 유산소 운동을 결합한 고강도 기능성 운동을 통해
+                    어제보다 강한 당신을 만들어 드립니다.
+                </p>
+                <ul class="space-y-3 mt-4 text-gray-300">
+                    <li class="flex items-center gap-3">
+                        <i data-lucide="dumbbell" class="text-neon w-5 h-5"></i>
+                        <span>다양한 무게와 장비 완비</span>
+                    </li>
+                    <li class="flex items-center gap-3">
+                        <i data-lucide="users" class="text-neon w-5 h-5"></i>
+                        <span>초보자도 함께하는 즐거운 그룹 수업</span>
+                    </li>
+                    <li class="flex items-center gap-3">
+                        <i data-lucide="clock" class="text-neon w-5 h-5"></i>
+                        <span>자유로운 시간에 운동 가능한 Open Gym</span>
+                    </li>
+                </ul>
+            </div>
+            <div
+                class="aspect-video bg-zinc-800 rounded-lg overflow-hidden relative group shadow-2xl border border-zinc-800">
+                <!-- Updated Image: Action shot with dark mood -->
+                <img src="https://images.unsplash.com/photo-1550345332-09e3ac987658?q=80&w=1587&auto=format&fit=crop"
+                    class="object-cover w-full h-full group-hover:scale-105 transition duration-500 opacity-90"
+                    alt="CrossFit Workout">
+            </div>
+        </div>
+    </section>
+
+    <!-- Schedule Section -->
+    <section id="schedule" class="bg-zinc-900 py-20 relative">
+        <!-- Background element for better blending -->
+        <div class="absolute inset-0 bg-black/50"></div>
+
+        <div class="section-container relative z-10">
+            <div class="max-w-6xl mx-auto">
+                <!-- Header -->
+                <div class="text-center mb-10">
+                    <h2 class="text-4xl md:text-5xl font-bold mb-4 heading-font uppercase text-white">Time Table</h2>
+                    <div class="w-16 h-1 bg-neon mx-auto"></div>
+                </div>
+
+                <!-- Desktop Grid View (Dark Theme) -->
+                <div class="schedule-grid border-zinc-700 bg-zinc-800 text-sm md:text-base">
+                    <!-- Header Row -->
+                    <div class="schedule-cell bg-black text-neon font-bold">TIME</div>
+                    <div class="schedule-cell bg-black text-gray-300 font-bold">MON</div>
+                    <div class="schedule-cell bg-black text-gray-300 font-bold">TUE</div>
+                    <div class="schedule-cell bg-black text-gray-300 font-bold">WED</div>
+                    <div class="schedule-cell bg-black text-gray-300 font-bold">THU</div>
+                    <div class="schedule-cell bg-black text-gray-300 font-bold">FRI</div>
+                    <div class="schedule-cell bg-black text-white font-bold border-l border-zinc-700">SAT</div>
+
+                    <!-- Row 1: 10:30 -->
+                    <div class="schedule-cell bg-zinc-900 text-neon font-bold">10:30</div>
+                    <div class="schedule-cell bg-zinc-900/50 text-white">CrossFit</div>
+                    <div class="schedule-cell bg-zinc-900/50 text-white">CrossFit</div>
+                    <div class="schedule-cell bg-zinc-900/50 text-white">CrossFit</div>
+                    <div class="schedule-cell bg-zinc-900/50 text-white">CrossFit</div>
+                    <div class="schedule-cell bg-zinc-900/50 text-neon">Open Gym</div>
+
+                    <!-- Sat Morning WOD (Spans this row) -->
+                    <div
+                        class="schedule-cell bg-zinc-900 text-white border-l border-zinc-700 flex flex-col justify-center">
+                        <span class="font-bold text-neon">WOD</span>
+                        <span class="text-xs text-gray-300">10:00 ~ 11:30</span>
+                    </div>
+
+                    <!-- Row 2: Mid-day & Open Gym -->
+                    <div class="schedule-cell flex items-center bg-zinc-900 text-neon font-bold"
+                        style="min-height: 120px;">Daytime</div>
+
+                    <!-- Mon-Fri Open Gym -->
+                    <div
+                        class="schedule-cell col-span-5 bg-zinc-800/80 text-neon border border-neon/20 my-1 mx-1 rounded flex flex-col items-center justify-center gap-1">
+                        <span class="text-xl font-bold uppercase tracking-wider">Open Gym</span>
+                        <span class="text-sm text-gray-400">12:00 ~ 18:00</span>
+                    </div>
+
+                    <!-- Sat Closed (Spans remaining rows visually or just empty) -->
+                    <div
+                        class="schedule-cell bg-black/80 border-l border-zinc-700 row-span-4 flex items-center justify-center text-zinc-600">
+                        Closed
+                    </div>
+
+                    <!-- Row 3: 18:30 -->
+                    <div class="schedule-cell bg-zinc-900 text-neon font-bold">18:30</div>
+                    <div class="schedule-cell bg-zinc-900/50 text-white">CrossFit</div>
+                    <div class="schedule-cell bg-zinc-900/50 text-white">CrossFit</div>
+                    <div class="schedule-cell bg-zinc-900/50 text-white">CrossFit</div>
+                    <div class="schedule-cell bg-zinc-900/50 text-white">CrossFit</div>
+                    <div class="schedule-cell bg-zinc-900/50 text-white">CrossFit</div>
+                    <!-- Sat Closed continues -->
+
+                    <!-- Row 4: 20:00 -->
+                    <div class="schedule-cell bg-zinc-900 text-neon font-bold">20:00</div>
+                    <div class="schedule-cell bg-zinc-900/50 text-white">CrossFit</div>
+                    <div class="schedule-cell bg-zinc-900/50 text-white">CrossFit</div>
+                    <div class="schedule-cell bg-zinc-900/50 text-white">CrossFit</div>
+                    <div class="schedule-cell bg-zinc-900/50 text-white">CrossFit</div>
+                    <div class="schedule-cell bg-zinc-900/50 text-white">CrossFit</div>
+                    <!-- Sat Closed continues -->
+
+                    <!-- Row 5: 22:00 -->
+                    <div class="schedule-cell bg-zinc-900 text-neon font-bold">22:00</div>
+                    <div class="schedule-cell bg-zinc-900/50 text-white">CrossFit</div>
+                    <div class="schedule-cell bg-zinc-900/50 text-white">CrossFit</div>
+                    <div class="schedule-cell bg-zinc-900/50 text-white">CrossFit</div>
+                    <div class="schedule-cell bg-zinc-900/50 text-white">CrossFit</div>
+                    <div class="schedule-cell bg-zinc-900/50 text-white">CrossFit</div>
+                    <!-- Sat Closed continues -->
+
+                </div>
+
+                <div class="text-center mt-8 space-y-2 text-gray-400">
+                    <p class="text-sm tracking-widest uppercase"><span class="text-neon font-bold mr-2">Mon - Fri</span>
+                        10:00 - 23:00</p>
+                    <p class="text-sm tracking-widest uppercase"><span class="text-neon font-bold mr-2">Sat</span> 10:00
+                        - 11:30 ONLY</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Access Section -->
+    <section id="access" class="section-container">
+        <div class="grid md:grid-cols-2 gap-0 border border-zinc-800 rounded-2xl overflow-hidden shadow-2xl">
+            <!-- Info -->
+            <div class="bg-zinc-900 p-10 flex flex-col justify-center">
+                <h2 class="text-3xl font-bold mb-8 heading-font uppercase">Access info</h2>
+
+                <div class="space-y-8">
+                    <div>
+                        <div class="text-neon text-sm font-bold uppercase tracking-wider mb-2 flex items-center gap-2">
+                            <i data-lucide="map-pin" class="w-4 h-4"></i> Address
+                        </div>
+                        <p class="text-xl font-bold">경기 부천시 원미구 부천로 32 지하1층</p>
+                        <p class="text-gray-400 mt-1 text-sm">
+                            부천역 북부출구 ABC마트 지하 1층<br>
+                            (1호선 부천역 3번 출구에서 328m)
+                        </p>
+                    </div>
+
+                    <div>
+                        <div class="text-neon text-sm font-bold uppercase tracking-wider mb-2 flex items-center gap-2">
+                            <i data-lucide="phone" class="w-4 h-4"></i> Contact
+                        </div>
+                        <p class="text-xl font-bold tracking-wider">010-3769-7192</p>
+                    </div>
+
+                    <div class="flex gap-4 pt-4">
+                        <a href="https://cafe.naver.com/cfbok" target="_blank"
+                            class="flex items-center gap-2 px-4 py-2 bg-[#03C75A] text-white rounded font-bold hover:brightness-110 transition">
+                            <i data-lucide="coffee" class="w-4 h-4"></i> Naver Cafe
+                        </a>
+                        <a href="https://www.instagram.com/cf.bok/" target="_blank"
+                            class="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded font-bold hover:brightness-110 transition">
+                            <i data-lucide="instagram" class="w-4 h-4"></i> Instagram
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Map -->
+            <div class="bg-zinc-800 h-[400px] md:h-auto relative">
+                <!-- Bucheon Station Area Map Embed -->
+                <iframe
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3165.234668541819!2d126.7806!3d37.4841!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x357b7d6092055555%3A0x123456789!2z44Gs44KE44GX!5e0!3m2!1sko!2skr!4v1700000000000!5m2!1sko!2skr"
+                    width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"
+                    class="absolute inset-0 grayscale contrast-125 invert opacity-80 hover:opacity-100 transition duration-500"></iframe>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-black border-t border-zinc-900 py-12">
+        <div class="section-container flex flex-col md:flex-row justify-between items-center gap-8">
+            <div class="text-center md:text-left">
+                <div class="text-2xl font-bold tracking-tighter heading-font mb-2">
+                    CROSSFIT <span class="text-neon">BOK</span>
+                </div>
+                <p class="text-zinc-500 text-sm">© 2025 CrossFit BOK.</p>
+            </div>
+
+            <div class="flex gap-6">
+                <a href="https://cafe.naver.com/cfbok" target="_blank"
+                    class="text-zinc-400 hover:text-[#03C75A] transition">
+                    <span class="font-bold">N</span> Cafe
+                </a>
+                <a href="https://www.instagram.com/cf.bok/" target="_blank"
+                    class="text-zinc-400 hover:text-pink-500 transition">
+                    <i data-lucide="instagram"></i>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        lucide.createIcons();
+
+        // Simple Smooth Scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

@@ -75,3 +75,4 @@ docker compose logs -f
 - **하이브리드 뷰**: `index2.html`에 공지사항 섹션 통합
 - **모바일 최적화**: 상단 날짜 표시 중복 제거(큰 날짜로 통일) 및 정보 부재 시 안내 메시지 강화
 - **편의성 개선**: 메인 화면 폰트 자동 맞춤(AUTO) 버튼 추가
+- **Landing Page**: `landing_bench.html` 추가 (CrossFit Hommachi 벤치마킹, Dark/Neon 테마 적용)
